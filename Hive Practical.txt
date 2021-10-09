@@ -1,0 +1,107 @@
+$ hive
+
+show databases;
+
+show tables;
+
+clear
+
+To create table and load data from file located in local file system
+
+-In hive type command, 
+    > create table emp(Name string, City string, contact bigint) 
+    row format delimited
+    fields terminated by ','
+    stored as textfile;
+
+  >desc post;;
+
+[training@localhost ~]$ hadoop fs -cat /user/hive/warehouse/post/userp
+
+ Querying
+
+>select count(1) from post;
+>drop table post;
+
+hive> CREATE EXTERNAL TABLE posts
+> (user STRING, post STRING, time BIGINT)
+> ROW FORMAT DELIMITED
+> FIELDS TERMINATED BY ','
+> STORED AS TEXTFILE
+> LOCATION '/training/hive/';  
+
+
+hive> CREATE TABLE post1 (user STRING, post STRING, time BIGINT)
+    > PARTITIONED BY(country STRING)                            
+    > ROW FORMAT DELIMITED                                      
+    > FIELDS TERMINATED BY ','                                  
+    > STORED AS TEXTFILE;      
+
+desc post1;
+
+show partitions post1;
+
+Now create two files userp-US and userp-AUS with same format(3 columns)
+
+Then load it using the command
+
+hive> load data local inpath '/home/training/userp-AUS'
+    > overwrite into table post1 partition (country='AUS');
+
+hive> load data local inpath '/home/training/userp-US'
+    > overwrite into table post1 partition (country='US');
+
+To check the partitions;
+
+show partitions;
+
+To check in HDFS
+
+[training@localhost ~]$ hadoop fs -ls /user/hive/warehouse/post1
+
+[training@localhost ~]$ hadoop fs -ls /user/hive/warehouse/post1/country=AUS
+
+[training@localhost ~]$ hadoop fs -cat /user/hive/warehouse/post1/country=AUS/userp-AUS
+
+Querying the partioned table
+select * from post1 where country='US' limit 1;   
+
+
+
+
+JOINS
+Create two tables customers and orders
+Columns of customers table are id,name,age,address,salary
+columns of orders table are oid,c_id,amount
+
+Insert data into both of them
+
+
+Default join is Inner join
+hive> select c.id,c.name,c.age,o.amount
+    > from customers c join orders o   
+    > on (c.id=o.c_id); 
+
+
+Left  Join
+hive> select c.id,c.name,o.amount 
+    > from customers c
+    > left outer join orders o
+    > on(c.id=o.c_id);
+
+Right join
+ select c.id,c.name,o.amount
+    > from customers c           
+    > right outer join orders  o 
+    > on (c.id=o.c_id);
+
+ 
+Full outer join
+hive> select c.id,c.name,o.amount 
+    > from customers c
+    > full outer join orders o
+    > on (c.id=o.c_id);
+
+
+
+
