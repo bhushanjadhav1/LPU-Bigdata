@@ -23,8 +23,8 @@ To create table and load data from file located in local file system
 >select count(1) from post;
 >drop table post;
 
-hive> CREATE EXTERNAL TABLE posts
-> (user STRING, post STRING, time BIGINT)
+hive> CREATE EXTERNAL TABLE Inventory
+> (Item_id STRING, Item_Name STRING, Item_Type STRING, Quantity BIGINT)
 > ROW FORMAT DELIMITED
 > FIELDS TERMINATED BY ','
 > STORED AS TEXTFILE
